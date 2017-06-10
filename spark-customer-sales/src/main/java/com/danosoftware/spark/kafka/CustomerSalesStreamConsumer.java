@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import kafka.serializer.StringDecoder;
-
 import org.apache.spark.SparkConf;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaPairInputDStream;
@@ -23,85 +21,83 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-public class CustomerSalesStreamConsumer implements IStreamMessagingConsumer
-{
-    private static final Logger logger = LoggerFactory.getLogger(CustomerSalesStreamConsumer.class);
+import kafka.serializer.StringDecoder;
 
-    // TODO - Danny - replace static constants with parameter service entries
-    private static final String SPARK_APP_NAME = "CustomerSalesProcessor";
-    private static final String SPARK_MASTER_URL = "local[8]";
-    private static final long SPARK_BATCH_DURATION_IN_SECONDS = 2;
-    private static final String KAFKA_BROKER_URL = "localhost:9092";
+public class CustomerSalesStreamConsumer implements IStreamMessagingConsumer {
+	private static final Logger logger = LoggerFactory.getLogger(CustomerSalesStreamConsumer.class);
 
-    private final JavaPairInputDStream<String, CustomerSale> kafkaStream;
-    private final JavaStreamingContext jssc;
-    private final SparkProcessor<String, CustomerSale> processor;
+	// TODO - Danny - replace static constants with parameter service entries
+	private static final String SPARK_APP_NAME = "CustomerSalesProcessor";
+	private static final String SPARK_MASTER_URL = "local[8]";
+	private static final long SPARK_BATCH_DURATION_IN_SECONDS = 2;
+	private static final String KAFKA_BROKER_URL = "localhost:9092";
 
-    @Inject
-    public CustomerSalesStreamConsumer(@Named("topics") List<String> topics, SparkProcessor<String, CustomerSale> processor)
-    {
-        // confirm all required parameters are supplied
-        Preconditions.checkNotNull(topics, "null argument passed to CustomerSalesStreamConsumer topics parameter");
-        Preconditions.checkNotNull(processor, "null argument passed to CustomerSalesStreamConsumer processor parameter");
+	private final JavaPairInputDStream<String, CustomerSale> kafkaStream;
+	private final JavaStreamingContext jssc;
+	private final SparkProcessor<String, CustomerSale> processor;
 
-        // Create context with specified batch duration interval
-        SparkConf sparkConf = new SparkConf().setAppName(SPARK_APP_NAME).setMaster(SPARK_MASTER_URL);
-        this.jssc = new JavaStreamingContext(sparkConf, Durations.seconds(SPARK_BATCH_DURATION_IN_SECONDS));
-        jssc.checkpoint("/tmp/");
+	@Inject
+	public CustomerSalesStreamConsumer(@Named("topics") List<String> topics,
+			SparkProcessor<String, CustomerSale> processor) {
+		// confirm all required parameters are supplied
+		Preconditions.checkNotNull(topics, "null argument passed to CustomerSalesStreamConsumer topics parameter");
+		Preconditions.checkNotNull(processor,
+				"null argument passed to CustomerSalesStreamConsumer processor parameter");
 
-        // add Kafka broker url to parameter map
-        Map<String, String> kafkaParams = new HashMap<String, String>();
-        kafkaParams.put("metadata.broker.list", KAFKA_BROKER_URL);
+		// Create context with specified batch duration interval
+		SparkConf sparkConf = new SparkConf().setAppName(SPARK_APP_NAME); // .setMaster(SPARK_MASTER_URL);
+		this.jssc = new JavaStreamingContext(sparkConf, Durations.seconds(SPARK_BATCH_DURATION_IN_SECONDS));
+		jssc.checkpoint("/tmp/");
 
-        // create set of Kafka topics to consume
-        Set<String> topicsSet = new HashSet<String>(topics);
+		// add Kafka broker url to parameter map
+		Map<String, String> kafkaParams = new HashMap<String, String>();
+		kafkaParams.put("metadata.broker.list", KAFKA_BROKER_URL);
 
-        // initialise Customer Sales DStream from Kafka
-        this.kafkaStream = KafkaUtils.createDirectStream(jssc, String.class, CustomerSale.class, StringDecoder.class,
-                CustomerSaleDecoder.class, kafkaParams, topicsSet);
+		// create set of Kafka topics to consume
+		Set<String> topicsSet = new HashSet<String>(topics);
 
-        // initialise spark processor
-        this.processor = processor;
-    }
+		// initialise Customer Sales DStream from Kafka
+		this.kafkaStream = KafkaUtils.createDirectStream(jssc, String.class, CustomerSale.class, StringDecoder.class,
+				CustomerSaleDecoder.class, kafkaParams, topicsSet);
 
-	@Override
-    public void configure()
-    {
-        /*
-         *  Set-up the spark process.
-         *  No computation will occur until the stream starts.
-         */
-        processor.process(kafkaStream);
-    }
+		// initialise spark processor
+		this.processor = processor;
+	}
 
 	@Override
-    public void close()
-    {
-        // close streaming context
-        jssc.close();
-
-        logger.info("Closed streaming consumer.");
-    }
-
-	@Override
-    public void start()
-    {
-        // start the computation
-        jssc.start();
-
-        logger.info("Started streaming consumer.");
-
-        // block until computation completed or stopped
-        jssc.awaitTermination();
-    }
+	public void configure() {
+		/*
+		 * Set-up the spark process. No computation will occur until the stream
+		 * starts.
+		 */
+		processor.process(kafkaStream);
+	}
 
 	@Override
-    public void stop()
-    {
-        // stop computation
-        jssc.stop();
+	public void close() {
+		// close streaming context
+		jssc.close();
 
-        logger.info("Stopped streaming consumer.");
-    }
+		logger.info("Closed streaming consumer.");
+	}
+
+	@Override
+	public void start() {
+		// start the computation
+		jssc.start();
+
+		logger.info("Started streaming consumer.");
+
+		// block until computation completed or stopped
+		jssc.awaitTermination();
+	}
+
+	@Override
+	public void stop() {
+		// stop computation
+		jssc.stop();
+
+		logger.info("Stopped streaming consumer.");
+	}
 
 }
