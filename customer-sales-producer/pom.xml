@@ -13,11 +13,6 @@
 	<name>customer-sales-producer</name>
 	<description>customer-sales-producer</description>
 
-	<!-- <build> <plugins> <plugin> <artifactId>maven-jar-plugin</artifactId> 
-		<version>2.3.2</version> <configuration> <archive> <manifest> <mainClass>com.danosoftware.spark.main.CustomerSalesProducer</mainClass> 
-		</manifest> </archive> <finalName>customer-sales-producer</finalName> </configuration> 
-		</plugin> </plugins> </build> -->
-
 	<build>
 		<plugins>
 			<plugin>

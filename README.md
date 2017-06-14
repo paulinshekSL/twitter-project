@@ -106,9 +106,9 @@ From here, click on `Streaming` tab to monitor:
   - Processing Time (how long batches of customer sales took to process)
   - Review performance of individual batches
   
-By default, the Spark application will write high volume customers (based on the received customer sales) to a sub-directory of your home directory: `/home/user1/spark-results/customers.txt`.
+By default, the Spark application will write high volume customers (based on the received customer sales) to a sub-directory of your home directory. For example: `/home/user1/spark-results/customers.txt`.
   
-When finished, stop the producer and watch how the streaming input rate drops to zero and the pending queue drops to zero once everything has been processed.
+When you're ready, stop the producer and watch how the streaming input rate drops to zero and the pending queue drops to zero once everything has been processed.
 
 ### Shutting Down Apache Spark
 

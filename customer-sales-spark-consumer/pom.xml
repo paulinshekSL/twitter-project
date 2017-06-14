@@ -12,25 +12,6 @@
 	<artifactId>customer-sales-spark-consumer</artifactId>
 	<name>customer-sales-spark-consumer</name>
 	<description>customer-sales-spark-consumer</description>
-	<!--  
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>com.danosoftware.spark.main.CustomerSalesConsumer</mainClass>
-						</manifest>
-					</archive>
-					<finalName>customer-sales-consumer</finalName>
-				</configuration>
-			</plugin>
-
-		</plugins>
-	</build>
-	-->
 	
 	<build>
 		<plugins>

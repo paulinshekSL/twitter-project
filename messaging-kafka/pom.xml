@@ -14,7 +14,6 @@
 	<description>messaging-kafka</description>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
 			<artifactId>kafka-clients</artifactId>
@@ -30,7 +29,6 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 		</dependency>
-
 	</dependencies>
 
 </project>
