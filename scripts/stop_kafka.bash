@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# This script expects the APACHE_KAFKA_DIR environmental variable to have
+# been set to the directory where Kafka is deployed to. This is used to find
+# the needed Kafka scripts.
+#
+# Alternatively the APACHE_KAFKA_DIR variable can be hard-coded here. For example:
+# APACHE_KAFKA_DIR="/home/user1/my-apps/kafka_2.11-0.9.0.0"
+
 APACHE_KAFKA_DIR="/Users/Danny/deploy/claritize/lib/third-party/kafka_2.11-0.9.0.0"
 
 if [ -z "$APACHE_KAFKA_DIR" ] ; then

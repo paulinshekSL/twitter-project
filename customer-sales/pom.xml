@@ -15,6 +15,7 @@
 
 	<modules>
 		<module>../messaging-kafka</module>
-		<module>../spark-customer-sales</module>
+		<module>../customer-sales-producer</module>
+		<module>../customer-sales-spark-consumer</module>
 	</modules>
 </project>

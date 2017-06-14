@@ -1,4 +1,4 @@
-package com.danosoftware.messaging.beans;
+package com.danosoftware.messaging.dto;
 
 import java.io.Serializable;
 

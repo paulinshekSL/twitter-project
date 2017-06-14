@@ -10,7 +10,7 @@ import org.apache.kafka.common.serialization.Deserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.danosoftware.messaging.beans.CustomerSale;
+import com.danosoftware.messaging.dto.CustomerSale;
 
 /**
  * Converts a Customer Sale into a serialized byte-stream.

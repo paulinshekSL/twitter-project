@@ -12,6 +12,8 @@ import org.apache.spark.streaming.Time;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaPairInputDStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.danosoftware.messaging.dto.CustomerSale;
 import com.danosoftware.spark.utilities.FileUtilities;
@@ -34,12 +36,19 @@ import scala.Tuple2;
 @SuppressWarnings("serial")
 public class CustomerSaleStream implements Serializable, SparkProcessor<String, CustomerSale> {
 
+	private static Logger logger = LoggerFactory.getLogger(CustomerSaleStream.class);
+
 	private static final int MIN_QUANTITY = 60_000_000;
 
-	private static final String OUTPUT_DIRECTORY = "/Users/Danny/spark-results/";
+	// write results to 'spark-results' sub-directory of user's home directory
+	private static final String OUTPUT_DIRECTORY = System.getProperty("user.home") + "/spark-results/";
+
+	// full-path to wanted output file
 	private static final String OUTPUT_FILEPATH = OUTPUT_DIRECTORY + "customers.txt";
 
 	public CustomerSaleStream() {
+
+		logger.info("Customer Sales results will be written to '{}'.", OUTPUT_FILEPATH);
 
 		// create results directory
 		FileUtilities.createDirectory(OUTPUT_DIRECTORY);

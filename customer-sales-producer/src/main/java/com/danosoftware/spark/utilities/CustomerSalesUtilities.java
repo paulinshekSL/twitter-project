@@ -10,8 +10,10 @@ public class CustomerSalesUtilities {
 	// number of messages
 	private static final int NUMBER_MESSAGES = 500000;
 
-	// possible enumerations - repeated enumerations make them more likely to be
-	// chosen
+	// random number generator
+	private static final Random rand = new Random();
+
+	// possible enumerations - repeated enumerations make them more likely
 	private static final String CUSTOMERS[] = { "Joe Bloggs", "Fred Smith", "Ola Nordmann", "Walter Plinge",
 			"Ola Nordmann", "Joe Bloggs", "Joe Bloggs", "Fred Smith" };
 
@@ -30,11 +32,8 @@ public class CustomerSalesUtilities {
 	 * Return next customer string
 	 */
 	private static String nextCustomer() {
-		/*
-		 * generate a random enumeration
-		 */
+		// generate a random enumeration
 		int possibleEnumerations = CUSTOMERS.length;
-		Random rand = new Random();
 		int enumerationIndex = rand.nextInt(possibleEnumerations - 1);
 		return CUSTOMERS[enumerationIndex];
 	}
@@ -43,10 +42,7 @@ public class CustomerSalesUtilities {
 	 * Return next value
 	 */
 	private static Double nextValue() {
-		/*
-		 * generate a random value from 0 to 100
-		 */
-		Random rand = new Random();
+		// generate a random value from 0 to 100
 		return rand.nextDouble() * 100D;
 	}
 
@@ -54,10 +50,7 @@ public class CustomerSalesUtilities {
 	 * Return next quantity
 	 */
 	private static Integer nextQuantity() {
-		/*
-		 * generate a random value from 0 to 500
-		 */
-		Random rand = new Random();
+		// generate a random value from 0 to 500
 		return rand.nextInt(500);
 	}
 }
