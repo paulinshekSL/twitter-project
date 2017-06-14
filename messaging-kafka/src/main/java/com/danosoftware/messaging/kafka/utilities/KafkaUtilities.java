@@ -8,7 +8,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
-import com.danosoftware.messaging.beans.CustomerSale;
+import com.danosoftware.messaging.dto.CustomerSale;
 import com.danosoftware.messaging.iface.IMessagingConsumer;
 import com.danosoftware.messaging.iface.IMessagingProcessor;
 import com.danosoftware.messaging.iface.IMessagingProducer;

@@ -1,36 +1,42 @@
-package com.danosoftware.messaging.kafka.serialization;
+package com.danosoftware.spark.serialization;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.util.Map;
 
-import org.apache.kafka.common.serialization.Deserializer;
+import kafka.serializer.Decoder;
+import kafka.utils.VerifiableProperties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.danosoftware.messaging.dto.CustomerSale;
 
 /**
- * Converts a Customer Sale into a serialized byte-stream.
- * Used by Kafka producers to send Customer Sale by Kafka.
+ * Converts a serialized byte-stream into a CustomerSale.
+ * Used by Spark stream consumers to decode a CustomerSale from Kafka.
  * 
  * @author Danny
  *
  */
-public class CustomerSaleDeserializer implements Deserializer<CustomerSale>
+public class CustomerSaleDecoder implements Decoder<CustomerSale>
 {
-    private static final Logger logger = LoggerFactory.getLogger(CustomerSaleDeserializer.class);
+    private static final Logger logger = LoggerFactory.getLogger(CustomerSaleDecoder.class);
 
-    @Override
-    public void configure(Map<String, ?> configs, boolean isKey)
+    /**
+     * Decoder constructor. Decoder implementations MUST be constructed with a VerifiableProperties
+     * argument - even if it is not used.
+     * 
+     * @param props
+     */
+    public CustomerSaleDecoder(VerifiableProperties props)
     {
-        // no action    
+        // no action
     }
 
     @Override
-    public CustomerSale deserialize(String topic, byte[] data)
+    public CustomerSale fromBytes(byte[] data)
     {
         /*
          *  TODO - uses standard Java IO for deserialization. Investigate using Kryo for faster deserialization. See:
@@ -54,11 +60,5 @@ public class CustomerSaleDeserializer implements Deserializer<CustomerSale>
             logger.error("Error while deserializing CustomerSale.", e);
             return null;
         }
-    }
-
-    @Override
-    public void close()
-    {
-        // no action      
     }
 }

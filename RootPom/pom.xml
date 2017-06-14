@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.danosoftware</groupId>
 	<artifactId>RootPom</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -17,16 +17,8 @@
 		<slf4j.version>1.7.6</slf4j.version>
 	</properties>
 
-	
 	<dependencyManagement>
 		<dependencies>
-			
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>messaging-kafka</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
@@ -50,8 +42,6 @@
 				<artifactId>guava</artifactId>
 				<version>${guava.version}</version>
 			</dependency>
-			
-
 		</dependencies>
 	</dependencyManagement>
 
