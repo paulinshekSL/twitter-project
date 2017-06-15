@@ -2,6 +2,9 @@ package com.danosoftware.messaging.dto;
 
 import java.io.Serializable;
 
+/**
+ * Represents a single customer sale
+ */
 public class CustomerSale implements Serializable
 {
     private static final long serialVersionUID = 1L;

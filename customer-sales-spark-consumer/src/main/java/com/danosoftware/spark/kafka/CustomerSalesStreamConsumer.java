@@ -1,11 +1,12 @@
 package com.danosoftware.spark.kafka;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.danosoftware.messaging.dto.CustomerSale;
+import com.danosoftware.spark.processors.SparkProcessor;
+import com.danosoftware.spark.serialization.CustomerSaleDecoder;
+import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import kafka.serializer.StringDecoder;
 import org.apache.spark.SparkConf;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaPairInputDStream;
@@ -14,14 +15,7 @@ import org.apache.spark.streaming.kafka.KafkaUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.danosoftware.messaging.dto.CustomerSale;
-import com.danosoftware.spark.processors.SparkProcessor;
-import com.danosoftware.spark.serialization.CustomerSaleDecoder;
-import com.google.common.base.Preconditions;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
-import kafka.serializer.StringDecoder;
+import java.util.*;
 
 public class CustomerSalesStreamConsumer implements IStreamMessagingConsumer {
 	private static final Logger logger = LoggerFactory.getLogger(CustomerSalesStreamConsumer.class);
@@ -44,8 +38,16 @@ public class CustomerSalesStreamConsumer implements IStreamMessagingConsumer {
 		Preconditions.checkNotNull(processor,
 				"null argument passed to CustomerSalesStreamConsumer processor parameter");
 
-		// Create context with specified batch duration interval
-		SparkConf sparkConf = new SparkConf().setAppName(SPARK_APP_NAME); // .setMaster(SPARK_MASTER_URL);
+		/*
+		 * Create context with specified batch duration interval.
+		 *
+		 * When creating the Spark configuration, alternative setters can be called depending on use.
+		 *
+		 * .setAppName(SPARK_APP_NAME) = used when application will be deployed to a cluster.
+		 * .setMaster(SPARK_MASTER_URL) = used when testing locally (not deployed to Spark cluster).
+		 *
+		 */
+		SparkConf sparkConf = new SparkConf().setAppName(SPARK_APP_NAME);
 		this.jssc = new JavaStreamingContext(sparkConf, Durations.seconds(SPARK_BATCH_DURATION_IN_SECONDS));
 		jssc.checkpoint("/tmp/");
 
@@ -99,5 +101,4 @@ public class CustomerSalesStreamConsumer implements IStreamMessagingConsumer {
 
 		logger.info("Stopped streaming consumer.");
 	}
-
 }

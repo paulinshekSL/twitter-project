@@ -1,10 +1,10 @@
 package com.danosoftware.spark.utilities;
 
+import com.danosoftware.messaging.dto.CustomerSale;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import com.danosoftware.messaging.dto.CustomerSale;
 
 public class CustomerSalesUtilities {
 	// number of messages
@@ -17,6 +17,11 @@ public class CustomerSalesUtilities {
 	private static final String CUSTOMERS[] = { "Joe Bloggs", "Fred Smith", "Ola Nordmann", "Walter Plinge",
 			"Ola Nordmann", "Joe Bloggs", "Joe Bloggs", "Fred Smith" };
 
+	/**
+	 * Generate a list of random customer sales
+	 *
+	 * @return
+	 */
 	public static List<CustomerSale> generateCustomerSales() {
 		List<CustomerSale> sales = new ArrayList<>();
 
