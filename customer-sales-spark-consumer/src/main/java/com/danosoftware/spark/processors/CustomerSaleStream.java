@@ -1,9 +1,7 @@
 package com.danosoftware.spark.processors;
 
-import java.io.Serializable;
-import java.sql.Timestamp;
-import java.util.List;
-
+import com.danosoftware.messaging.dto.CustomerSale;
+import com.danosoftware.spark.utilities.FileUtilities;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function2;
@@ -14,21 +12,21 @@ import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaPairInputDStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.danosoftware.messaging.dto.CustomerSale;
-import com.danosoftware.spark.utilities.FileUtilities;
-
 import scala.Tuple2;
 
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.List;
+
 /**
- * Spark processor that calculates the average value per unique enumerations
- * seen in the stream.
- * 
- * These averages are then persisted as normal-distributions in the summary
- * tables (one per enum every micro-batch). The processor then clusters these
- * averages to produce clusters of enumerations with similar averages. These
- * clusters are then persisted as one normal-distribution per cluster (one per
- * cluster every micro-batch).
+ * Spark processor that finds high volume customers over a sliding 60 second
+ * window from a stream of customer sales. This is calculated every 10 seconds.
+ *
+ * These high volume customers are then appended continuously to a text file.
+ *
+ * The processor extracts individual customer name and quantities, combines them into total
+ * quantities per customer. This is then summarised over a 60 second window and high volume
+ * customers filtered for this period.
  * 
  * @author Danny
  *
@@ -38,6 +36,7 @@ public class CustomerSaleStream implements Serializable, SparkProcessor<String, 
 
 	private static Logger logger = LoggerFactory.getLogger(CustomerSaleStream.class);
 
+	// minimum quantity in last 60 seconds to be classified as high volume customer
 	private static final int MIN_QUANTITY = 60_000_000;
 
 	// write results to 'spark-results' sub-directory of user's home directory
@@ -64,37 +63,30 @@ public class CustomerSaleStream implements Serializable, SparkProcessor<String, 
 		JavaDStream<CustomerSale> customers = stream.map(custStream -> custStream._2);
 
 		// Map sales to [customer name, quantity] pairs.
-		JavaPairDStream<String, Integer> allCustomerQuantities = customers.mapToPair(customer -> {
-			String customerName = customer.getCustomerName();
-			Integer quantity = customer.getQuantity();
-			return new Tuple2<String, Integer>(customerName, quantity);
-		});
+		JavaPairDStream<String, Integer> allCustomerQuantities = customers.mapToPair(
+				customer -> new Tuple2<String, Integer>(customer.getCustomerName(), customer.getQuantity())
+		);
 
-		// For each customer, sum overall quantities bought
-		JavaPairDStream<String, Integer> quantitiesPerCustomer = allCustomerQuantities
-				.reduceByKey(new QuantitySummer());
+		// For a customer, reduce quantities by summing
+		JavaPairDStream<String, Integer> quantitiesPerCustomer = allCustomerQuantities.reduceByKey(
+				(quantity1, quantity2) -> quantity1 + quantity2
+		);
 
-		quantitiesPerCustomer.print();
-
-		// Every 10 seconds create a stream of customer activity over the last
-		// 60 seconds.
+		// Every 10 seconds summarise customer activity over the last 60 seconds.
 		JavaPairDStream<String, Integer> windowedQuantitiesPerCustomer = allCustomerQuantities
-				.reduceByKeyAndWindow(new QuantitySummer(), Durations.seconds(60), Durations.seconds(10));
+				.reduceByKeyAndWindow(
+						(quantity1, quantity2) -> quantity1 + quantity2,
+						Durations.seconds(60),
+						Durations.seconds(10)
+				);
 
-		// filter high volume customers over the last 60 seconds
-		JavaPairDStream<String, Integer> highVolumeCustomers = windowedQuantitiesPerCustomer
-				.filter(customer -> (customer._2 >= MIN_QUANTITY));
+		// filter high volume customers (from results over the last 60 seconds)
+		JavaPairDStream<String, Integer> highVolumeCustomers = windowedQuantitiesPerCustomer.filter(
+				customer -> (customer._2 >= MIN_QUANTITY)
+		);
 
 		// store high volume customers
 		highVolumeCustomers.foreachRDD(new StoreCustomers());
-	}
-
-	private class QuantitySummer implements Function2<Integer, Integer, Integer> {
-		@Override
-		public Integer call(Integer quantity1, Integer quantity2) {
-			// sum two quantities for same customer
-			return quantity1 + quantity2;
-		}
 	}
 
 	private class StoreCustomers implements Function2<JavaPairRDD<String, Integer>, Time, Void> {
