@@ -7,8 +7,6 @@
 # Alternatively the APACHE_KAFKA_DIR variable can be hard-coded here. For example:
 # APACHE_KAFKA_DIR="/home/user1/my-apps/kafka_2.11-0.9.0.0"
 
-APACHE_KAFKA_DIR="/Users/Danny/deploy/claritize/lib/third-party/kafka_2.11-0.9.0.0"
-
 if [ -z "$APACHE_KAFKA_DIR" ] ; then
         "echo WARNING - APACHE_KAFKA_DIR NOT SET. CAN NOT START KAFKA"
 else
