@@ -1,4 +1,13 @@
-# Real-time Customer Sales Processing using Spark Streaming
+# Big Data Study Group Project
+
+This repo is a mirror of https://github.com/DannyNicholas/spark-real-time-customer-sales. The initial aim of this project is to adapt it for use with data from the Bristol Transport Data API.
+
+Please raise issues and we will prioritise and work through them during the study sessions.
+
+The original README continues below:
+---
+
+## Real-time Customer Sales Processing using Spark Streaming
 This project is a demonstration of a simple real-time data processing pipeline using Apache Kafka and Apache Spark Streaming.
 
 In this demonstration, a continuous stream of random customer sales records are pushed into an Apache Kafka messgaing queue. These customer sales records are consumed as a stream by Apache Spark. These customer sales records are summarised in a sliding window using Apache Spark stream processing and these results are continuously appended to a text file.
