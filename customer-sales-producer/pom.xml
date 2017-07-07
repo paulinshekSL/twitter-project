@@ -12,7 +12,12 @@
 	<artifactId>customer-sales-producer</artifactId>
 	<name>customer-sales-producer</name>
 	<description>customer-sales-producer</description>
-
+	<properties>
+		<consumer.key>FR3dWbgVh2OK5MzbZTbFYA4fw</consumer.key>
+		<consumer.secret>Mf3Z9zPY0YHjurkC6DqiLC1XzcjC58bb8OK7YEbDocYgFN8twh</consumer.secret>
+		<access.token>20308710-BH4Z9EOJIpAmDzKRzeijpdywLrRRFqs0b5cMpOBAz</access.token>
+		<access.token.secret>H2LzMTjxBdOKMDf7Vq7yz5wpoiGLfViFQ07EVhekRStMn</access.token.secret>
+	</properties>
 	<build>
 		<plugins>
 			<plugin>
@@ -48,6 +53,11 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>messaging-kafka</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.twitter</groupId>
+			<artifactId>hbc-core</artifactId> <!-- or hbc-twitter4j -->
+			<version>2.2.0</version> <!-- or whatever the latest version is -->
 		</dependency>
 	</dependencies>
 </project>

@@ -9,9 +9,9 @@ import java.util.List;
  * @author Danny
  *
  */
-public class CustomerSaleMessaging {
+public class TweetsMessaging {
 	// topic name for tests
-	private static final String TOPIC = "customerSalesTopic";
+	private static final String TOPIC = "tweetsTopic";
 
 	// string key name
 	private static final String KEY = "customerSalesKey";
@@ -43,8 +43,10 @@ public class CustomerSaleMessaging {
 	}
 
 	// no public construction
-	private CustomerSaleMessaging() {
+	private TweetsMessaging() {
 
 	}
 
 }
+
+

@@ -31,7 +31,7 @@ else
     eval ${start_kafka_command}
 
     # Create Kafka topic if it doesn't already exist
-    wantedTopic="customerSalesTopic"
+    wantedTopic="tweetsTopic"
     topicExists=`${APACHE_KAFKA_DIR}/bin/kafka-topics.sh --list --zookeeper localhost:2181 | grep ${wantedTopic}`
     if [ -z "$topicExists" ]; then
             echo -e "WARN: Could not find Kafka Topic: ${wantedTopic}. Creating it..."
