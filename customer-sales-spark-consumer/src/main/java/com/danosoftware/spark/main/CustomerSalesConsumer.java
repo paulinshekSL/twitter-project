@@ -4,11 +4,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.danosoftware.messaging.kafka.utilities.TweetsMessaging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.danosoftware.messaging.dto.CustomerSale;
-import com.danosoftware.messaging.kafka.utilities.CustomerSaleMessaging;
 import com.danosoftware.spark.kafka.CustomerSalesStreamConsumer;
 import com.danosoftware.spark.kafka.IStreamMessagingConsumer;
 import com.danosoftware.spark.processors.CustomerSaleStream;
@@ -39,7 +39,7 @@ public class CustomerSalesConsumer
     public void start() throws InterruptedException
     {
         SparkProcessor<String, CustomerSale> processor = new CustomerSaleStream();
-        IStreamMessagingConsumer consumer = new CustomerSalesStreamConsumer(CustomerSaleMessaging.getTopicList(), processor);
+        IStreamMessagingConsumer consumer = new CustomerSalesStreamConsumer(TweetsMessaging.getTopicList(), processor);
 
         /*
          *  start Kafka consumer.

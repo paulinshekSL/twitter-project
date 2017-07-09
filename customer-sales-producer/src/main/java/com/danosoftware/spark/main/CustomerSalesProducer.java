@@ -1,9 +1,8 @@
 package com.danosoftware.spark.main;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +19,6 @@ import com.danosoftware.messaging.dto.CustomerSale;
 import com.danosoftware.messaging.iface.IMessagingProducer;
 import com.danosoftware.messaging.kafka.utilities.TweetsMessaging;
 import com.danosoftware.messaging.kafka.utilities.KafkaUtilities;
-import com.danosoftware.spark.utilities.CustomerSalesUtilities;
 
 public class CustomerSalesProducer
 {
@@ -30,13 +28,13 @@ public class CustomerSalesProducer
     public static void main(String[] args) throws InterruptedException
     {
         CustomerSalesProducer spark = new CustomerSalesProducer();
-        spark.start();
+        spark.start(args[0], args[1], args[2], args[3]);
     }
 
-    public void start() throws InterruptedException
+    public void start(String consumerKey, String consumerSecret, String token, String secret) throws InterruptedException
     {
         ExecutorService producerThread = Executors.newSingleThreadExecutor();
-        producerThread.execute(new ProducerTask(3600));
+        producerThread.execute(new ProducerTask(3600, consumerKey, consumerSecret, token, secret));
 
         /*
          *  wait for producer and consumer to finish
@@ -58,7 +56,7 @@ public class CustomerSalesProducer
         private final Authentication auth;
         private final BasicClient client;
 
-        private ProducerTask(int seconds)
+        private ProducerTask(int seconds, String consumerKey, String consumerSecret, String token, String secret)
         {
             logger.info("Starting Producer. Will run for '{}' seconds.", seconds);
 
@@ -73,7 +71,7 @@ public class CustomerSalesProducer
             //////////////////////////////////////////////////////
 
             // Create an appropriately sized blocking queue
-            this.queue = new LinkedBlockingQueue<String>(10000);
+            this.queue = new LinkedBlockingQueue<>(10000);
 
             // Define our endpoint: By default, delimited=length is set (we need this for our processor)
             // and stall warnings are on.
@@ -109,18 +107,24 @@ public class CustomerSalesProducer
             while (System.currentTimeMillis() < endTime)
             {
                 /// get messages from twitter stream
-                List<String> messages = ArrayList<>();
+                List<String> messages = new ArrayList<>();
                 for (int msgRead = 0; msgRead < 1000; msgRead++) {
                     if (client.isDone()) {
                         System.out.println("Client connection closed unexpectedly: " + client.getExitEvent().getMessage());
                         break;
                     }
 
-                    String msg = queue.poll(5, TimeUnit.SECONDS);
-                    if (msg == null) {
-                        System.out.println("Did not receive a message in 5 seconds");
-                    } else {
-                        messages.add(msg);
+                    String msg;
+                    try {
+                        msg = queue.poll(5, TimeUnit.SECONDS);
+                        if (msg == null) {
+                            System.out.println("Did not receive a message in 5 seconds");
+                        } else {
+                            messages.add(msg);
+                        }
+                    } catch (InterruptedException e) {
+                        System.out.println("Thread interrupsed whilst waiting to poll.");
+                        break;
                     }
                 }
 
